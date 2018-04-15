@@ -39,7 +39,7 @@ class Board():
     def set_board(self, data, val=1):
         '''sets board with value according to ...'''
         for row, col in data:
-            self.set_val(row,col, val)
+            self.set_val(row, col, val)
 
 
     def get_zero_random_pos(self):

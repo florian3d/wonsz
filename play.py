@@ -21,13 +21,18 @@ pygame.mouse.set_visible(True)
 
 pygame.font.init()
 game_font = pygame.font.SysFont('Consolas', 48)
-osd_font = pygame.font.SysFont('Consolas', 32)
+osd_font = pygame.font.SysFont('Consolas', 28)
 
 clock = pygame.time.Clock()
 
+pause = game_font.render('PAUSE', True, (255, 255, 255))
+pause_surf = pygame.Surface((pause.get_width()+20, 60))
+pause_surf.fill((128, 0, 255))
+pause_surf.blit(pause, (offset, offset))
+
 go = game_font.render('GAME OVER', True, (255, 255, 255))
 game_over_surf = pygame.Surface((go.get_width()+20, 60))
-game_over_surf.fill((255, 128,0))
+game_over_surf.fill((255, 128, 0))
 game_over_surf.blit(go, (offset, offset))
 
 col_info = (128, 255, 128)
@@ -70,7 +75,7 @@ while not BREAK:
 
     for i in range(game.board.cols*game.board.rows):
 
-        row, col = i//game.board.rows, i%game.board.cols
+        row, col = i//game.board.cols, i%game.board.cols
         x, y = col*(cube+offset//2), row*(cube+offset//2)
 
         color = (0, 64, 0)
@@ -82,16 +87,26 @@ while not BREAK:
         if (row, col) in game.wonsz.body:
 
             color = (0, 255, 0)
+            
+            if (row, col) == game.wonsz.body[0]:
+            
+                color = (255, 255, 0)
         
         pygame.draw.rect(window, color, (x+offset, y+offset, cube, cube), 0)
 
     window.blit(osd_font.render(f'HIGH SCORE: {game.high_score}', True, col_info), (board_width, offset))
-    window.blit(osd_font.render(f'SCORE: {game.score}', True, col_info), (board_height, offset+text_offset))
-    window.blit(osd_font.render(f'N: new game', True, col_info), (board_height, offset+text_offset*3))
-    window.blit(osd_font.render(f'R: toggle pause', True, col_info), (board_height, offset+text_offset*4))
+    window.blit(osd_font.render(f'SCORE: {game.score}', True, col_info), (board_width, offset+text_offset))
+    window.blit(osd_font.render(f'Direction: {game.wonsz.direction}', True, col_info), (board_width, offset+text_offset*3))
+    window.blit(osd_font.render(f'Wonsz: {len(game.wonsz.body)}', True, col_info), (board_width, offset+text_offset*4))
+    window.blit(osd_font.render(f'Points: {game.points}', True, col_info), (board_width, offset+text_offset*5))
+    window.blit(osd_font.render(f'N: new game', True, col_info), (board_width, offset+text_offset*7))
+    window.blit(osd_font.render(f'R: toggle pause', True, col_info), (board_width, offset+text_offset*8))
+
+    if game.pause:
+        window.blit(pause_surf, (board_width//2 - pause_surf.get_width()//2, board_height//2-pause_surf.get_height()//2))
 
     if game.game_over:
-        window.blit(game_over_surf, (board_width//2 - game_over_surf.get_width()//2, board_width//2-game_over_surf.get_height()//2))
+        window.blit(game_over_surf, (board_width//2 - game_over_surf.get_width()//2, board_height//2-game_over_surf.get_height()//2))
 
     pygame.display.update()
     clock.tick(fps)

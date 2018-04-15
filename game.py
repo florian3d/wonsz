@@ -12,22 +12,28 @@ class Game():
         self.high_score = 0
         self.wonsz = Wonsz(self.board)
         self.apple = self.give_me_apple()
-        self.speed = .001
+        self.speed = .0015
         self.time = time()
         self.eat = False
-        self.pause = False
-
+        self.pause = True
+        self.modes = ('Classic', 'Modern')
+        self.mode = self.modes[0]
+        self.steps = 0
+        self.tiles = self.board.rows*self.board.cols
+        self.points = self.tiles - self.steps
 
     def restart(self):
 
         self.board = Board()
         self.game_over = False
-        self.won = False
         self.score = 0
         self.wonsz = Wonsz(self.board)
-        self.apple = (10, 10)
+        self.apple = self.give_me_apple()
         self.time = time()
         self.eat = False
+        self.pause = True
+        self.steps = 0
+        self.points = self.tiles - self.steps
 
     def left(self):
 
@@ -81,12 +87,15 @@ class Game():
             self.game_over = True
 
         else:
+            self.steps += 1
+            self.points = self.tiles - self.steps + len(self.wonsz.body)
             if self.wonsz.body[0] == self.apple:
-                self.score += len(self.wonsz.body)
+                self.score += self.points
                 if self.score > self.high_score:
                     self.high_score = self.score
                 self.eat = True
                 self.apple = self.give_me_apple()
+                self.steps = 0
 
             self.wonsz.body.insert(0, (row, col))
             if not self.eat:
