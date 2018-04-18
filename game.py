@@ -1,6 +1,8 @@
 from board import Board
 from wonsz import Wonsz
 from time import time
+from speed import Speed
+from high_score import HighScore
 
 class Game():
 
@@ -9,10 +11,10 @@ class Game():
         self.board = Board(rows=rows, cols=cols)
         self.game_over = False
         self.score = 0
-        self.high_score = 0
+        self.high_score = HighScore()
         self.wonsz = Wonsz(self.board)
         self.apple = self.give_me_apple()
-        self.speed = .0015
+        self.speed = Speed()
         self.time = time()
         self.eat = False
         self.pause = True
@@ -21,6 +23,7 @@ class Game():
         self.steps = 0
         self.tiles = self.board.rows*self.board.cols
         self.points = self.tiles - self.steps
+        self.debug = []
 
     def restart(self):
 
@@ -52,15 +55,18 @@ class Game():
         self.wonsz.direction = self.wonsz.directions.down
 
     def update(self):
-        if not self.pause:
+        if not self.pause and not self.game_over:
             t0 = time()
-            t = (t0-self.time)/100
-            if t > self.speed:
-                self.time = t0
+            t = t0 - self.time
+            if t > self.speed.value:
+                self.time = time() # t0
                 self._update_()
+                return True
+            return False
 
     def _update_(self):
 
+        self.eat = False
         row, col = self.wonsz.body[0]
 
         if self.wonsz.direction == self.wonsz.directions.left:
@@ -91,8 +97,8 @@ class Game():
             self.points = self.tiles - self.steps + len(self.wonsz.body)
             if self.wonsz.body[0] == self.apple:
                 self.score += self.points
-                if self.score > self.high_score:
-                    self.high_score = self.score
+                if self.score > self.high_score.value:
+                    self.high_score.value = self.score
                 self.eat = True
                 self.apple = self.give_me_apple()
                 self.steps = 0
@@ -100,7 +106,6 @@ class Game():
             self.wonsz.body.insert(0, (row, col))
             if not self.eat:
                 self.wonsz.body.pop()
-            self.eat = False
 
     def give_me_apple(self):
         self.board.fill_board()

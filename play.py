@@ -4,16 +4,26 @@ from game import Game
 import pygame
 import pygame.font
 
-offset = 8
-cube = 20
+def get_text_surf(text, bck):
+    off = 16
+    font = pygame.font.SysFont('Consolas', 48)
+    txt = font.render(text, True, (255, 255, 255))
+    surf = pygame.Surface((txt.get_width()+off, txt.get_height()+off))
+    surf.fill(bck)
+    surf.blit(txt, (off//2, off//2))
+    return surf
+
+margin = 16
+offset = 4
+cube = 24
 info_width = 300
 fps = 25
 
 game = Game(rows=20, cols=20)
 
-board_width = game.board.cols*cube+offset//2*game.board.cols+offset*2
-board_height = game.board.rows*cube+offset//2*game.board.rows+offset*2
-w_width = board_width+info_width+offset
+board_width = game.board.cols * (cube+offset) - offset + margin*2
+board_height = game.board.rows * (cube+offset) - offset + margin*2
+w_width = board_width + info_width
 w_height = board_height
 window = pygame.display.set_mode((w_width, w_height))
 pygame.display.set_caption('W O N S Z')
@@ -25,15 +35,8 @@ osd_font = pygame.font.SysFont('Consolas', 28)
 
 clock = pygame.time.Clock()
 
-pause = game_font.render('PAUSE', True, (255, 255, 255))
-pause_surf = pygame.Surface((pause.get_width()+20, 60))
-pause_surf.fill((128, 0, 255))
-pause_surf.blit(pause, (offset, offset))
-
-go = game_font.render('GAME OVER', True, (255, 255, 255))
-game_over_surf = pygame.Surface((go.get_width()+20, 60))
-game_over_surf.fill((255, 128, 0))
-game_over_surf.blit(go, (offset, offset))
+pause_surf = get_text_surf('PAUSE', (128, 0, 255))
+game_over_surf = get_text_surf('GAME OVER', (255, 128, 0))
 
 col_info = (128, 255, 128)
 col_bck = (0, 32, 0)
@@ -76,7 +79,8 @@ while not BREAK:
     for i in range(game.board.cols*game.board.rows):
 
         row, col = i//game.board.cols, i%game.board.cols
-        x, y = col*(cube+offset//2), row*(cube+offset//2)
+
+        x, y = col*(cube+offset)+margin, row*(cube+offset)+margin
 
         color = (0, 64, 0)
 
@@ -92,21 +96,22 @@ while not BREAK:
             
                 color = (255, 255, 0)
         
-        pygame.draw.rect(window, color, (x+offset, y+offset, cube, cube), 0)
+        pygame.draw.rect(window, color, (x, y, cube, cube), 0)
 
-    window.blit(osd_font.render(f'HIGH SCORE: {game.high_score}', True, col_info), (board_width, offset))
-    window.blit(osd_font.render(f'SCORE: {game.score}', True, col_info), (board_width, offset+text_offset))
-    window.blit(osd_font.render(f'Direction: {game.wonsz.direction}', True, col_info), (board_width, offset+text_offset*3))
-    window.blit(osd_font.render(f'Wonsz: {len(game.wonsz.body)}', True, col_info), (board_width, offset+text_offset*4))
-    window.blit(osd_font.render(f'Points: {game.points}', True, col_info), (board_width, offset+text_offset*5))
-    window.blit(osd_font.render(f'N: new game', True, col_info), (board_width, offset+text_offset*7))
-    window.blit(osd_font.render(f'R: toggle pause', True, col_info), (board_width, offset+text_offset*8))
+    window.blit(osd_font.render(f'HIGH SCORE: {game.high_score}', True, col_info), (board_width, margin))
+    window.blit(osd_font.render(f'SCORE: {game.score}', True, col_info), (board_width, margin+text_offset))
+    window.blit(osd_font.render(f'DIRECTION: {game.wonsz.direction}', True, col_info), (board_width, margin+text_offset*3))
+    window.blit(osd_font.render(f'WONSZ: {len(game.wonsz.body)}', True, col_info), (board_width, margin+text_offset*4))
+    window.blit(osd_font.render(f'POINTS: {game.points}', True, col_info), (board_width, margin+text_offset*5))
+    window.blit(osd_font.render(f'N: NEW GAME', True, col_info), (board_width, margin+text_offset*7))
+    window.blit(osd_font.render(f'R: TOGGLE PAUSE', True, col_info), (board_width, margin+text_offset*8))
 
     if game.pause:
-        window.blit(pause_surf, (board_width//2 - pause_surf.get_width()//2, board_height//2-pause_surf.get_height()//2))
+        window.blit(pause_surf, (board_width + info_width//2 - pause_surf.get_width()//2 - margin//2, board_height - pause_surf.get_height() - margin))
 
     if game.game_over:
-        window.blit(game_over_surf, (board_width//2 - game_over_surf.get_width()//2, board_height//2-game_over_surf.get_height()//2))
+        window.blit(game_over_surf, (board_width + info_width//2 - game_over_surf.get_width()//2 - margin//2, board_height - game_over_surf.get_height() - margin))
 
     pygame.display.update()
     clock.tick(fps)
+
