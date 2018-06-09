@@ -53,23 +53,23 @@ while not BREAK:
         
         elif event.type == pygame.KEYDOWN:
 
-            if event.key == pygame.K_x: # x
+            if event.key == pygame.K_x: # EXIT
                 BREAK = True
 
-            if event.key == pygame.K_n: # n
+            if event.key == pygame.K_n: # RESTART GAME
                 game.restart()
 
             if not game.game_over:
                 
-                if event.key == pygame.K_a: # a
+                if event.key == pygame.K_a: # LEFT
                     game.left()
-                if event.key == pygame.K_d: # d
+                if event.key == pygame.K_d: # RIGHT
                     game.right()
-                if event.key == pygame.K_w: # w
+                if event.key == pygame.K_w: # UP
                     game.up()
-                if event.key == pygame.K_s: # s
+                if event.key == pygame.K_s: # DOWN
                     game.down()
-                if event.key == pygame.K_r: # r
+                if event.key == pygame.K_r: # PAUSE
                     game.pause = not game.pause
 
     game.update()
