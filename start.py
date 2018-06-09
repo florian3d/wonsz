@@ -42,9 +42,9 @@ pause_surf = get_text_surf('PAUSE', (128, 0, 255))
 game_over_surf = get_text_surf('GAME OVER', (255, 128, 0))
 
 col_info = (128, 255, 128)
-info0 = osd_font.render(f'N: NEW GAME', True, col_info)
-info1 = osd_font.render(f'R: TOGGLE PAUSE', True, col_info)
-info2 = osd_font.render(f'123: CHANGE SPEED', True, col_info)
+info0 = osd_font.render('N: NEW GAME', True, col_info)
+info1 = osd_font.render('R: TOGGLE PAUSE', True, col_info)
+info2 = osd_font.render('123: CHANGE SPEED', True, col_info)
 
 col_bck = (0, 32, 0)
 text_offset = osd_font.get_height()+5
